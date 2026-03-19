@@ -7,5 +7,13 @@
 \pard\pardeftab720\partightenfactor0
 
 \f0\fs26\fsmilli13333 \cf0 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 npm install @neondatabase/serverless twilio\
+\outl0\strokewidth0 \strokec2 \{\
+  "name": "my-site",\
+  "version": "1.0.0",\
+  "dependencies": \{\
+    "@neondatabase/serverless": "^0.9.0",\
+    "twilio": "^5.0.0"\
+  \},\
+  "private": true\
+\}\
 }
