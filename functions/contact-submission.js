@@ -1,30 +1,48 @@
-const express = require('express');
-const multer = require('multer');
-const router = express.Router();
+const nodemailer = require('nodemailer');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Set the destination for uploaded files
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); // Use original name for the file
+exports.handler = async (event) => {
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ message: 'Method not allowed' })
+        };
     }
-});
-const upload = multer({ storage: storage });
 
-// Route handling form submission with file attachments
-router.post('/submit', upload.array('attachments'), (req, res) => {
+    const { name, email, message, file } = JSON.parse(event.body);
+
+    // Create a Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'shilohpines4503@gmail.com', // Replace with your email
+            pass: 'rzkv ltmq apds revr' // Replace with your email password or app password
+        }
+    });
+
+    // Setup email data
+    const mailOptions = {
+        from: email,
+        to: 'shilohpines4503@gmail.com', // Replace with recipient email
+        subject: 'Contact Form Submission',
+        text: message,
+        attachments: [{
+            filename: file.name,
+            content: file.content,
+            encoding: 'base64'
+        }]
+    };
+
     try {
-        const { body, files } = req;
-        // Handle form data
-        console.log('Form Data:', body);
-        console.log('Uploaded Files:', files);
-        res.status(200).json({ message: 'Form submitted successfully!', files });
+        // Send the email
+        await transporter.sendMail(mailOptions);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Email sent successfully' })
+        };
     } catch (error) {
-        console.error('Error handling form submission:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Failed to send email', error })
+        };
     }
-});
-
-module.exports = router;
+};
