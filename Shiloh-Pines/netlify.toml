@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+  command = "npm run build"
+
+[dev]
+  command = "npm run dev"
+
+[functions]
+  directory = "functions"
+
+[attributes]
+  contact-form = { email = "your-email@example.com", attachments = true }
+  notifications = { enabled = true, format = "html" }
