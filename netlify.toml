@@ -1,2 +1,12 @@
 [build]
 publish = "Shiloh-Pines"
+
+[[redirects]]
+from = "/contact"
+to = "/#contact"
+status = 200
+
+[[redirects]]
+from = "/success"
+to = "/"
+status = 200
