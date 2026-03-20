@@ -1,16 +1,5 @@
 [build]
-publish = "Shiloh-pines"
+publish = "Shiloh-Pines"
 
 [[forms]]
 name = "contact-form"
-recipient = "shilohpines4503@gmail.com"
-
-[[redirects]]
-from = "/contact"
-to = "/#contact"
-status = 200
-
-[[redirects]]
-from = "/success"
-to = "/"
-status = 200
