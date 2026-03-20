@@ -818,6 +818,50 @@ function spRemoveFile(){
   spZoneClass(null);
   document.getElementById('spEFile').classList.remove('sp-vis');
 }
+  // ── HELPER FUNCTION ───────────────────────────────────────────────
+function spV(id, show) {
+  var el = document.getElementById(id);
+  if (show) {
+    el.classList.add('sp-vis');
+  } else {
+    el.classList.remove('sp-vis');
+  }
+}
+
+// ── FORM SUBMIT ───────────────────────────────────────────────────
+function handleFormSubmit(e){
+  e.preventDefault();
+  // Run our UI validation first
+  var name=document.getElementById('spFName').value.trim();
+  var email=document.getElementById('spFEmail').value.trim();
+  var phone=document.getElementById('spFPhone').value.trim();
+  var eok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var ok=true;
+  spV('spEName',!name);if(!name)ok=false;
+  spV('spEEmail',!eok);if(!eok)ok=false;
+  spV('spEPhone',!phone);if(!phone)ok=false;
+  spV('spEFile',!spFile);if(!spFile)ok=false;
+  if(!ok)return false;
+
+  // Validation passed — submit to Netlify
+  var btn=document.getElementById('spSubBtn');
+  btn.disabled=true;btn.textContent='Submitting…';
+  
+  var form = e.target;
+  var formData = new FormData(form);
+  
+  fetch('/', {
+    method: 'POST',
+    body: formData
+  }).then(function(){
+    spOK();
+  }).catch(function(err){
+    spFail('Failed to submit. Please try again.');
+    console.error(err);
+  });
+  
+  return false;
+}
 document.getElementById('spFFile').addEventListener('change',function(e){if(e.target.files&&e.target.files[0])spSetFile(e.target.files[0]);});
 (function(){
   var z=document.getElementById('spUZone');
@@ -825,30 +869,6 @@ document.getElementById('spFFile').addEventListener('change',function(e){if(e.ta
   z.addEventListener('dragleave',function(){z.classList.remove('sp-dz-over');});
   z.addEventListener('drop',function(e){e.preventDefault();z.classList.remove('sp-dz-over');if(e.dataTransfer.files&&e.dataTransfer.files[0])spSetFile(e.dataTransfer.files[0]);});
 })();
-
-// ── FORM SUBMIT ───────────────────────────────────────────────────
-async function handleFormSubmit(e) {
-  e.preventDefault();
-  
-  // Validate form
-  var name = document.getElementById('spFName').value.trim();
-  var email = document.getElementById('spFEmail').value.trim();
-  var phone = document.getElementById('spFPhone').value.trim();
-  var message = document.getElementById('spFMsg').value.trim();
-  var eok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  var ok = true;
-  
-  spV('spEName', !name); if (!name) ok = false;
-  spV('spEEmail', !eok); if (!eok) ok = false;
-  spV('spEPhone', !phone); if (!phone) ok = false;
-  spV('spEFile', !spFile); if (!spFile) ok = false;
-  
-  if (!ok) return false;
-  
-  // Show loading state
-  var btn = document.getElementById('spSubBtn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting…';
   
   try {
     // Read file as base64
