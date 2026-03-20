@@ -32,7 +32,7 @@ nav{
   background:rgba(28,34,53,0.97);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:Sace-between;
   padding:0 40px;height:64px;width:100%;
 }
 .nav-brand{
@@ -823,25 +823,69 @@ document.getElementById('spFFile').addEventListener('change',function(e){if(e.ta
 })();
 
 // ── FORM SUBMIT ───────────────────────────────────────────────────
-function spV(id,show){document.getElementById(id).classList.toggle('sp-vis',show);}
-function spSubmit(e){
-  // Run our UI validation first — if it fails, block native submission
-  var name=document.getElementById('spFName').value.trim();
-  var email=document.getElementById('spFEmail').value.trim();
-  var phone=document.getElementById('spFPhone').value.trim();
-  var eok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  var ok=true;
-  spV('spEName',!name);if(!name)ok=false;
-  spV('spEEmail',!eok);if(!eok)ok=false;
-  spV('spEPhone',!phone);if(!phone)ok=false;
-  spV('spEFile',!spFile);if(!spFile)ok=false;
-  if(!ok){if(e)e.preventDefault();return false;}
-
-  // Validation passed — show loading state and let Netlify handle the POST
-  var btn=document.getElementById('spSubBtn');
-  btn.disabled=true;btn.textContent='Submitting\u2026';
-  // Form will submit natively to Netlify — no need to call spOK manually
-  return true;
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  
+  // Validate form
+  var name = document.getElementById('spFName').value.trim();
+  var email = document.getElementById('spFEmail').value.trim();
+  var phone = document.getElementById('spFPhone').value.trim();
+  var message = document.getElementById('spFMsg').value.trim();
+  var eok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var ok = true;
+  
+  spV('spEName', !name); if (!name) ok = false;
+  spV('spEEmail', !eok); if (!eok) ok = false;
+  spV('spEPhone', !phone); if (!phone) ok = false;
+  spV('spEFile', !spFile); if (!spFile) ok = false;
+  
+  if (!ok) return false;
+  
+  // Show loading state
+  var btn = document.getElementById('spSubBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  
+  try {
+    // Read file as base64
+    const fileData = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve({
+          content: e.target.result.split(',')[1],
+          filename: spFile.name,
+          type: spFile.type,
+        });
+      };
+      reader.readAsDataURL(spFile);
+    });
+    
+    // Send to Netlify Function
+    const response = await fetch('/.netlify/functions/contact-submission', {
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        message,
+        file: fileData,
+      }),
+    });
+    
+    const result = await response.json();
+    
+    if (response.ok) {
+      spOK();
+    } else {
+      spFail(result.error || 'Failed to send email');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    spFail('An error occurred. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Request a Showing →';
+  }
 }
 
 /*
