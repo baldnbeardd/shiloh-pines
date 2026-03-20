@@ -1511,33 +1511,37 @@ footer strong{color:rgba(232,224,208,0.75)}
         </div>
       </div>
     </div>
-    <form name="contact-form" class="contact-form" method="POST" data-netlify="true" enctype="multipart/form-data" onsubmit="return spSubmit(event)">
-        <input type="hidden" name="form-name" value="contact-form"/>
-      <input type="text" id="spFName" name="name" placeholder="Your Name *"/>
-      <div class="sp-err" id="spEName">Please enter your name.</div>
-      <input type="email" id="spFEmail" name="email" placeholder="Email Address *"/>
-      <div class="sp-err" id="spEEmail">Please enter a valid email address.</div>
-      <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *"/>
-      <div class="sp-err" id="spEPhone">Please enter your phone number.</div>
-      <textarea id="spFMsg" name="message" placeholder="Message — questions, preferred showing times, etc."></textarea>
-      <div>
-        <span class="upload-label">Bank Pre-Approval Letter <span>* Required</span></span>
-        <div class="upload-zone" id="spUZone">
-          <input type="file" id="spFFile" name="attachment" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
-          <span class="upload-icon">&#x1F4C4;</span>
-          <span class="upload-text"><strong>Click to upload</strong> or drag &amp; drop</span>
-          <span class="upload-hint">PDF or DOCX only &middot; Max 10 MB</span>
-        </div>
-        <div class="file-preview" id="spFPreview">
-          <span class="f-icon" id="spFIconEl">&#x1F4C4;</span>
-          <div class="f-info"><span class="f-name" id="spFNameEl"></span><span class="f-size" id="spFSizeEl"></span></div>
-          <button class="f-remove" onclick="spRemoveFile()" title="Remove">&times;</button>
-        </div>
-        <div class="sp-err" id="spEFile">A bank pre-approval letter (PDF or DOCX) is required.</div>
-      </div>
-      <div class="form-msg" id="spFormMsg"></div>
-      <button type="submit" class="btn-primary" id="spSubBtn" style="align-self:flex-start;padding:14px 28px">Request a Showing &rarr;</button>
+    <form id="contact-form" class="contact-form" onsubmit="return handleFormSubmit(event)">
+  <input type="text" id="spFName" name="name" placeholder="Your Name *"/>
+  <div class="sp-err" id="spEName">Please enter your name.</div>
+  
+  <input type="email" id="spFEmail" name="email" placeholder="Email Address *"/>
+  <div class="sp-err" id="spEEmail">Please enter a valid email address.</div>
+  
+  <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *"/>
+  <div class="sp-err" id="spEPhone">Please enter your phone number.</div>
+  
+  <textarea id="spFMsg" name="message" placeholder="Message — questions, preferred showing times, etc."></textarea>
+  
+  <div>
+    <span class="upload-label">Bank Pre-Approval Letter <span>* Required</span></span>
+    <div class="upload-zone" id="spUZone">
+      <input type="file" id="spFFile" name="attachment" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
+      <span class="upload-icon">&#x1F4C4;</span>
+      <span class="upload-text"><strong>Click to upload</strong> or drag &amp; drop</span>
+      <span class="upload-hint">PDF or DOCX only &middot; Max 10 MB</span>
     </div>
+    <div class="file-preview" id="spFPreview">
+      <span class="f-icon" id="spFIconEl">&#x1F4C4;</span>
+      <div class="f-info"><span class="f-name" id="spFNameEl"></span><span class="f-size" id="spFSizeEl"></span></div>
+      <button class="f-remove" onclick="spRemoveFile()" title="Remove">&times;</button>
+    </div>
+    <div class="sp-err" id="spEFile">A bank pre-approval letter (PDF or DOCX) is required.</div>
+  </div>
+  
+  <div class="form-msg" id="spFormMsg"></div>
+  <button type="submit" class="btn-primary" id="spSubBtn" style="align-self:flex-start;padding:14px 28px">Request a Showing &rarr;</button>
+</form>
   </div>
 </div>
 
