@@ -1,0 +1,4 @@
+[build]
+  base = "Shiloh-Pines"
+  publish = "."
+  functions = "netlify/functions"
