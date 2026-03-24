@@ -661,8 +661,8 @@ footer strong{color:rgba(232,224,208,0.75)}
       <div class="sp-err" id="spEName">Please enter your name.</div>
       <input type="email" id="spFEmail" name="email" placeholder="Email Address *"/>
       <div class="sp-err" id="spEEmail">Please enter a valid email address.</div>
-      <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *"/>
-      <div class="sp-err" id="spEPhone">Please enter your phone number.</div>
+      <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *" pattern="[\d\s\+\-\(\)]{7,}"/>
+      <div class="sp-err" id="spEPhone">Please enter a valid phone number (e.g. 616-555-1234).</div>
       <textarea id="spFMsg" name="message" placeholder="Message — questions, preferred showing times, etc."></textarea>
       <div>
         <span class="upload-label">Bank Pre-Approval Letter <span>* Required</span></span>
@@ -820,10 +820,12 @@ function handleFormSubmit(e){
   var email=document.getElementById('spFEmail').value.trim();
   var phone=document.getElementById('spFPhone').value.trim();
   var eok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var digits=phone.replace(/\D/g,'');
+  var pok=digits.length>=7&&digits.length<=15&&/^\+?[\d\s\-\(\)\.]{7,}$/.test(phone);
   var ok=true;
   spV('spEName',!name);if(!name)ok=false;
   spV('spEEmail',!eok);if(!eok)ok=false;
-  spV('spEPhone',!phone);if(!phone)ok=false;
+  spV('spEPhone',!pok);if(!pok)ok=false;
   spV('spEFile',!spFile);if(!spFile)ok=false;
   if(!ok){e.preventDefault();return false;}
 
