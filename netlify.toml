@@ -1,7 +1,2 @@
 [build]
 publish = "Shiloh-Pines"
-
-[[forms]]
-name = "contact-form"
-recipient = "shilohpines4503@gmail.com"
-notifyEvents = ["submissions"]

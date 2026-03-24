@@ -836,9 +836,15 @@ function handleFormSubmit(e){
   
   fetch('/', {
     method: 'POST',
+    headers: { 'Accept': 'application/json' },
     body: formData
-  }).then(function(){
-    spOK();
+  }).then(function(response){
+    if(response.ok){
+      spOK();
+    } else {
+      console.error('Form submission failed with status:', response.status);
+      spFail('Submission failed (status ' + response.status + '). Please try again.');
+    }
   }).catch(function(err){
     spFail('Failed to submit. Please try again.');
     console.error(err);
