@@ -672,14 +672,15 @@ footer strong{color:rgba(232,224,208,0.75)}
       </div>
     </div>
 
-    <form name="contact-form" class="contact-form" method="POST" data-netlify="true" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+    <form name="contact-form" class="contact-form" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" action="/?success=1#contact" onsubmit="return handleFormSubmit(event)">
         <input type="hidden" name="form-name" value="contact-form"/>
+        <p style="display:none"><label>Don't fill this out: <input name="bot-field"/></label></p>
       <input type="text" id="spFName" name="name" placeholder="Your Name *"/>
       <div class="sp-err" id="spEName">Please enter your name.</div>
       <input type="email" id="spFEmail" name="email" placeholder="Email Address *"/>
       <div class="sp-err" id="spEEmail">Please enter a valid email address.</div>
-      <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *"/>
-      <div class="sp-err" id="spEPhone">Please enter your phone number.</div>
+      <input type="tel" id="spFPhone" name="phone" placeholder="Phone Number *" pattern="[\d\s\+\-\(\)]{7,}"/>
+      <div class="sp-err" id="spEPhone">Please enter a valid phone number (e.g. 616-555-1234).</div>
       <textarea id="spFMsg" name="message" placeholder="Message — questions, preferred showing times, etc."></textarea>
       <div>
         <span class="upload-label">Bank Pre-Approval Letter <span>* Required</span></span>
@@ -803,7 +804,7 @@ function spZoneClass(cls){var z=document.getElementById('spUZone');z.classList.r
 function spSetFile(f){
   var e=document.getElementById('spEFile');
   if(!spValidFile(f)){spZoneClass('sp-dz-err');e.textContent='Invalid type. PDF or DOCX only.';e.classList.add('sp-vis');spFile=null;return;}
-  if(f.size>10485760){spZoneClass('sp-dz-err');e.textContent='File exceeds 10 MB.';e.classList.add('sp-vis');spFile=null;return;}
+  if(f.size>8388608){spZoneClass('sp-dz-err');e.textContent='File exceeds 8 MB limit.';e.classList.add('sp-vis');spFile=null;return;}
   spFile=f;
   var ext=f.name.split('.').pop().toUpperCase();
   document.getElementById('spFIconEl').textContent=ext==='PDF'?'\uD83D\uDCC4':'\uD83D\uDCDD';
@@ -831,37 +832,24 @@ function spV(id, show) {
 
 // ── FORM SUBMIT ───────────────────────────────────────────────────
 function handleFormSubmit(e){
-  e.preventDefault();
-  // Run our UI validation first
+  // Run client-side validation
   var name=document.getElementById('spFName').value.trim();
   var email=document.getElementById('spFEmail').value.trim();
   var phone=document.getElementById('spFPhone').value.trim();
   var eok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  var digits=phone.replace(/\D/g,'');
+  var pok=digits.length>=7&&digits.length<=15&&/^\+?[\d\s\-\(\)\.]{7,}$/.test(phone);
   var ok=true;
   spV('spEName',!name);if(!name)ok=false;
   spV('spEEmail',!eok);if(!eok)ok=false;
-  spV('spEPhone',!phone);if(!phone)ok=false;
+  spV('spEPhone',!pok);if(!pok)ok=false;
   spV('spEFile',!spFile);if(!spFile)ok=false;
-  if(!ok)return false;
+  if(!ok){e.preventDefault();return false;}
 
-  // Validation passed — submit to Netlify
+  // Validation passed — allow native form POST to Netlify
   var btn=document.getElementById('spSubBtn');
   btn.disabled=true;btn.textContent='Submitting…';
-  
-  var form = e.target;
-  var formData = new FormData(form);
-  
-  fetch('/', {
-    method: 'POST',
-    body: formData
-  }).then(function(){
-    spOK();
-  }).catch(function(err){
-    spFail('Failed to submit. Please try again.');
-    console.error(err);
-  });
-  
-  return false;
+  return true; // let the browser submit the form natively
 }
 document.getElementById('spFFile').addEventListener('change',function(e){if(e.target.files&&e.target.files[0])spSetFile(e.target.files[0]);});
 (function(){
@@ -890,6 +878,19 @@ function spFail(msg){
   mb.className='form-msg sp-fail';
   mb.textContent=msg||'Something went wrong. Please try again.';
 }
+// ── Detect successful submission redirect ─────────────────────────
+(function(){
+  if(window.location.search.indexOf('success=1')!==-1){
+    spOK();
+    // Clean up URL without reloading
+    if(window.history&&window.history.replaceState){
+      window.history.replaceState(null,'',window.location.pathname+window.location.hash);
+    }
+    // Scroll to the form/success message
+    var msg=document.getElementById('spFormMsg');
+    if(msg)msg.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+})();
 </script>
 </body>
 </html>
