@@ -75,8 +75,12 @@ nav{
 }
 .hero-photo{
   position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
 }
-.hero-photo img{
+.hero-photo-img-wrap{
+  position:absolute;inset:0;
+}
+.hero-photo-img-wrap img{
   width:100%;height:100%;object-fit:cover;object-position:center 40%;
   display:block;
 }
@@ -494,25 +498,33 @@ footer strong{color:rgba(232,224,208,0.75)}
   .details-grid{grid-template-columns:1fr}
   .gallery-header{flex-direction:column;align-items:flex-start;gap:14px}
 
-  /* ── Mobile hero: image full height, text slides below ── */
+  /* ── Mobile hero: image full width above, text panel below ── */
   .hero-photo{
-    min-height:65vw;
-    height:70vw;
-    max-height:520px;
+    position:static;
+    overflow:visible;
+    display:flex;
+    flex-direction:column;
   }
-  .hero-photo img{
+  .hero-photo-img-wrap{
+    position:relative;
+    width:100%;
+    height:72vw;
+    max-height:480px;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .hero-photo-img-wrap img{
     position:absolute;inset:0;
     width:100%;height:100%;
     object-fit:cover;object-position:center 30%;
   }
   .hero-photo-content{
     position:static;
-    margin-top:0;
+    width:100%;
   }
   .hero-photo-content-inner{
-    padding:20px 24px 28px;
+    padding:24px 20px 28px;
     border-left-width:3px;
-    border-radius:0;
   }
   .hero-stat .val{font-size:17px}
 }
@@ -536,8 +548,10 @@ footer strong{color:rgba(232,224,208,0.75)}
 <div class="hero" id="overview">
   <!-- Left: photo -->
   <div class="hero-photo">
-    <img src="https://convertri.imgix.net/408e1be2-f4de-11e9-99fe-0697e5ca793e%2F69c9ab574b88d66dddb1288a4f80ed93d64bd0b5%2Fhouse-front-enhanced-newdoor2.jpg" alt="4503 Shiloh Pines SE"/>
-    <div class="hero-photo-overlay"></div>
+    <div class="hero-photo-img-wrap">
+      <img src="https://convertri.imgix.net/408e1be2-f4de-11e9-99fe-0697e5ca793e%2F69c9ab574b88d66dddb1288a4f80ed93d64bd0b5%2Fhouse-front-enhanced-newdoor2.jpg" alt="4503 Shiloh Pines SE"/>
+      <div class="hero-photo-overlay"></div>
+    </div>
     <div class="hero-photo-content">
       <div class="hero-photo-content-inner">
         <span class="hero-location-tag">Grand Rapids, Michigan &middot; Available April 2026</span>
