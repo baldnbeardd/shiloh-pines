@@ -29,33 +29,43 @@ html,body{width:100%;overflow-x:hidden;background:#FAF7F2;color:#1C2235;font-fam
 /* ── NAV ── */
 nav{
   position:sticky;top:0;z-index:500;
-  background:rgba(28,34,53,0.97);
+  background:var(--gold);
   backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid rgba(0,0,0,0.12);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 40px;height:64px;width:100%;
 }
 .nav-brand{
   font-family:'Playfair Display',serif;
   font-size:16px;font-style:italic;
-  color:var(--gold-light);text-decoration:none;
+  color:var(--navy);text-decoration:none;
   white-space:nowrap;
 }
 .nav-links{display:flex;gap:32px;align-items:center;list-style:none;margin-left:auto}
 .nav-links a{
   text-decoration:none;font-size:11px;font-weight:500;
-  color:#E8E0D0;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--navy);letter-spacing:0.1em;text-transform:uppercase;
+  position:relative;padding-bottom:4px;
   transition:color 0.2s;
 }
-.nav-links a:hover{color:var(--gold)}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--navy);
+  transform:scaleX(0);transform-origin:center;
+  transition:transform 0.22s ease;
+  border-radius:1px;
+}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a:hover::after{transform:scaleX(1)}
 .nav-cta{
-  background:var(--gold)!important;color:var(--white)!important;
+  background:var(--navy)!important;color:var(--white)!important;
   padding:10px 22px!important;border-radius:3px!important;
   font-size:11px!important;font-weight:500!important;
   letter-spacing:0.1em!important;text-transform:uppercase!important;
-  white-space:nowrap!important;transition:background 0.2s!important;
+  white-space:nowrap!important;transition:background 0.2s,opacity 0.2s!important;
 }
-.nav-cta:hover{background:var(--gold-btn)!important}
+.nav-cta::after{display:none!important}
+.nav-cta:hover{background:var(--navy-light)!important;opacity:0.9!important}
 
 /* ── HERO — SPLIT LAYOUT ── */
 .hero{
@@ -483,9 +493,26 @@ footer strong{color:rgba(232,224,208,0.75)}
   .two-col{grid-template-columns:1fr;gap:36px}
   .details-grid{grid-template-columns:1fr}
   .gallery-header{flex-direction:column;align-items:flex-start;gap:14px}
+
+  /* ── Mobile hero: image full height, text slides below ── */
+  .hero-photo{
+    min-height:65vw;
+    height:70vw;
+    max-height:520px;
+  }
+  .hero-photo img{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;object-position:center 30%;
+  }
+  .hero-photo-content{
+    position:static;
+    margin-top:0;
+  }
   .hero-photo-content-inner{
     padding:20px 24px 28px;
     border-left-width:3px;
+    border-radius:0;
   }
   .hero-stat .val{font-size:17px}
 }
@@ -663,7 +690,7 @@ footer strong{color:rgba(232,224,208,0.75)}
       <span class="divider"></span>
       <p class="body-text" style="max-width:500px;margin-bottom:28px">Licensed Realtor transaction coordination reserved. Sixty day post-close move out requested. Home warranty available upon request. Evenings and weekends work great for showings. Serious inquiries only. A bank pre-approval letter is required with your showing request. No agents &mdash; come meet us directly. In most cases, we will be in touch to schedule within a few hours of submitting your request.</p>
       <span class="divider"></span>          
-        <div class="body-text" style="max-width:500px;margin-bottom:28px">Thinking of saving some money and selling your own house without a Realtor? You'll need a site like this. Send inquiries to drenfx@atomicmail.io.</div></br>
+        <div class="body-text" style="max-width:500px;margin-bottom:28px">Thinking of saving some money and selling your own house without a Realtor? You'll need a site like this. Send inquiries to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0f6b7d6a6169774f6e7b6062666c626e6663216660">[email&#160;protected]</a>.</div></br>
         <div class="contact-info">
         <div class="c-detail">
           <span class="c-icon">&#x1F4CD;</span>
@@ -672,7 +699,7 @@ footer strong{color:rgba(232,224,208,0.75)}
       </div>
     </div>
 
-    <form name="contact-form" class="contact-form" method="POST" data-netlify="true" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+    <form class='contact-form' enctype='multipart/form-data' method='POST' name='contact-form' onsubmit='return handleFormSubmit(event)'>
         <input type="hidden" name="form-name" value="contact-form"/>
       <input type="text" id="spFName" name="name" placeholder="Your Name *"/>
       <div class="sp-err" id="spEName">Please enter your name.</div>
@@ -725,7 +752,7 @@ footer strong{color:rgba(232,224,208,0.75)}
   <div class="car-thumbs" id="spThumbs"></div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
 // ── SUPABASE CONFIG (fill in when ready) ──────────────────────────
 // Step 1: load via CDN by adding to your host platform's head scripts:
 //   https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js
@@ -885,11 +912,4 @@ function spOK(){
 }
 function spFail(msg){
   var btn=document.getElementById('spSubBtn');
-  btn.disabled=false;btn.textContent='Request a Showing \u2192';
-  var mb=document.getElementById('spFormMsg');
-  mb.className='form-msg sp-fail';
-  mb.textContent=msg||'Something went wrong. Please try again.';
-}
-</script>
-</body>
-</html>
+  b
