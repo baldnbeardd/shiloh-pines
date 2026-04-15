@@ -933,4 +933,11 @@ function spOK(){
 }
 function spFail(msg){
   var btn=document.getElementById('spSubBtn');
-  b
+  btn.disabled=false;btn.textContent='Request a Showing \u2192';
+  var mb=document.getElementById('spFormMsg');
+  mb.className='form-msg sp-fail';
+  mb.textContent=msg||'Something went wrong. Please try again.';
+}
+</script>
+</body>
+</html>
